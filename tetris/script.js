@@ -96,6 +96,11 @@ const moveTetramino = (direction) => {
     if (!isMovable()) {
         tetramino.row = (direction === "down" ? row : tetramino.row);
         tetramino.column = (direction !== "down" ? column : tetramino.column);
+        
+        if (direction === "down") {
+            placeTetramino(tetramino);
+            tetramino = generateTetramino();
+        }
     }
 
     renderGrid();
@@ -119,7 +124,6 @@ const rotateTetramino = () => {
     renderTetramino();
 };
 
-
 /* ---------- COLLISION LOGIC ---------- */
 
 const isMovable = () => {
@@ -140,7 +144,48 @@ const isMovable = () => {
     });
 };
 
-/* ---------- MAIN LOOP ---------- */
+const isPlaceable = () => {
+    return tetramino.matrix.every((row, rowIndex) => {
+        return row.every((cell, columnIndex) => {
+            if (!cell) return true;
+            return (!(tetramino.row + rowIndex < 0));
+        });
+    });
+};
+
+/* ---------- PLACING LOGIC ---------- */
+
+const placeTetramino = () => {
+    if (!isPlaceable()) return gameOver();
+
+    tetramino.matrix.forEach((row, rowIndex) => {
+        row.forEach((cell, columnIndex) => {
+            if (cell) {
+                grid[tetramino.row + rowIndex][tetramino.column + columnIndex] = tetramino.name; 
+            }
+        });
+    });
+
+    clearFullLines();
+}
+
+const clearFullLines = () => {
+    grid.forEach((row, rowIndex) => {
+        if (!row.includes(0)) {
+            grid.splice(rowIndex, 1);
+            grid.unshift(new Array(10).fill(0));
+        }
+    })
+}
+
+/* ---------- + GAME OVER ---------- */
+
+const gameOver = () => {
+    alert("Game over");
+    location.reload();
+}
+
+/* ---------- + MAIN LOOP ---------- */
 
 let timeoutId, requestId;
 
@@ -155,7 +200,7 @@ const stopLoop = () => {
     clearTimeout(timeoutId);
 };
 
-/* ---------- EVENT LISTENERS ---------- */
+/* ---------- + EVENT LISTENERS ---------- */
 
 document.addEventListener('keydown', (event) => {
     switch (event.key) {
@@ -166,7 +211,7 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-/* ---------- START GAME ---------- */
+/* ---------- + START GAME ---------- */
 
 let tetramino = generateTetramino();
 renderGrid();
