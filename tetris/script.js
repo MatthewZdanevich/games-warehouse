@@ -107,6 +107,19 @@ const moveTetramino = (direction) => {
     }
 }
 
+const rotateTetramino = () => {
+    const originalMatrix = tetramino.matrix;
+    tetramino.matrix = tetramino.matrix[0].map((_, colIndex) =>
+        tetramino.matrix.map(row => row[colIndex]).reverse()
+    );
+
+    if (!isMovable()) tetramino.matrix = originalMatrix;
+
+    renderGrid();
+    renderTetramino();
+};
+
+
 /* ---------- COLLISION LOGIC ---------- */
 
 const isMovable = () => {
@@ -146,6 +159,7 @@ const stopLoop = () => {
 
 document.addEventListener('keydown', (event) => {
     switch (event.key) {
+        case "ArrowUp": rotateTetramino(); break;
         case "ArrowDown": moveTetramino("down"); break;
         case "ArrowLeft": moveTetramino("left"); break;
         case "ArrowRight": moveTetramino("right"); break;
