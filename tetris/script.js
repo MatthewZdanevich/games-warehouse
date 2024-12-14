@@ -43,177 +43,213 @@ const configuration = {
     }
 }
 
-/* ---------- GRID ---------- */
+/* ---------- CLASS TETRIS ---------- */
 
-let grid = Array(configuration.rows).fill().map(() => Array(configuration.columns).fill(0));
-let cells = document.querySelectorAll("#grid>div");
+class Tetris {
 
-const renderGrid = () => {
-    cells.forEach(cell => cell.removeAttribute("class"));
-    grid.forEach((row, rowIndex) => {
-        row.forEach((cell, columnIndex) => {
-            if (cell) {
-                const index = rowIndex * configuration.columns + columnIndex;
-                cells[index].classList.add(cell);
+    constructor(configuration) {
+        this.rows = configuration.rows;
+        this.columns = configuration.columns;
+        this.names = configuration.names;
+        this.matrices = configuration.matrices;
+
+        this.tetramino = undefined;
+        this.grid = undefined;
+
+        this.timeoutId = undefined;
+        this.requestId = undefined;
+    }
+
+    // TETRAMINO LOGIC
+
+    generateTetramino() {
+        const name = this.names[Math.floor(Math.random() * this.names.length)];
+        const matrix = this.matrices[name];
+        this.tetramino = new Tetramino(name, matrix);
+    }
+
+    moveTetramino(direction) {
+        const { row, column } = this.tetramino;
+
+        switch(direction) {
+            case "down": this.tetramino.row++; break;
+            case "right": this.tetramino.column++; break;
+            case "left": this.tetramino.column--; break;
+        }
+    
+        if (!this.grid.isMovable(this.tetramino)) {
+            this.tetramino.row = (direction === "down" ? row : this.tetramino.row);
+            this.tetramino.column = (direction !== "down" ? column : this.tetramino.column);
+            
+            if (direction === "down") {
+                this.grid.placeTetramino(this.tetramino, this.stopGame);
+                this.generateTetramino();
+            }
+        }
+    
+        this.renderGrid();
+        this.renderTetramino();
+    
+        if (direction === "down") {
+            this.stopLoop();
+            this.startLoop();
+        }
+    }
+
+    rotateTetramino() {
+        const originalMatrix = this.tetramino.matrix;
+        this.tetramino.rotate();
+    
+        if (!this.grid.isMovable(this.tetramino)) this.tetramino.matrix = originalMatrix;
+    
+        this.renderGrid();
+        this.renderTetramino();
+    }
+
+    // RENDER LOGIC
+
+    renderTetramino() {
+        this.tetramino.matrix.forEach((row, rowIndex) => {
+            row.forEach((cell, columnIndex) => {
+                if (cell && this.tetramino.row + rowIndex >= 0) {
+                    const index = (this.tetramino.row + rowIndex) * this.columns + (this.tetramino.column + columnIndex);
+                    this.grid.cells[index].classList.add(this.tetramino.name);
+                }
+            });
+        });
+    }
+
+    renderGrid() {
+        this.grid.cells.forEach(cell => cell.removeAttribute("class"));
+        this.grid.matrix.forEach((row, rowIndex) => {
+            row.forEach((cell, columnIndex) => {
+                if (cell) {
+                    const index = rowIndex * this.columns + columnIndex;
+                    this.grid.cells[index].classList.add(cell);
+                }
+            })
+        })
+    }
+
+    // LOOP LOGIC
+
+    startLoop() {
+        this.timeoutId = setTimeout(() => {
+            this.requestId = requestAnimationFrame(() => this.moveTetramino("down"));
+        }, 600);
+    }
+
+    stopLoop() {
+        cancelAnimationFrame(this.requestId);
+        clearTimeout(this.timeoutId);
+    }
+
+    // GAME LOGIC
+
+    startGame() {
+        document.addEventListener('keydown', (event) => {
+            switch (event.key) {
+                case "ArrowUp": this.rotateTetramino(); break;
+                case "ArrowDown": this.moveTetramino("down"); break;
+                case "ArrowLeft": this.moveTetramino("left"); break;
+                case "ArrowRight": this.moveTetramino("right"); break;
+            }
+        });
+
+        this.grid = new Grid(this.rows, this.columns);
+        this.generateTetramino();
+        this.renderGrid();
+        this.renderTetramino();
+        this.startLoop();
+    }
+
+    stopGame() {
+        alert("Game over");
+        location.reload();
+    }
+
+}
+
+/* ---------- CLASS TETRAMINO ---------- */
+
+class Tetramino {
+
+    constructor(name, matrix) {
+        this.name = name;
+        this.matrix = matrix;
+        this.row = -3;
+        this.column = 3;
+    }
+
+    rotate() {
+        this.matrix = this.matrix[0].map((_, colIndex) =>
+            this.matrix.map(row => row[colIndex]).reverse()
+        );
+    }
+
+}
+
+/* ---------- CLASS GRID ---------- */
+
+class Grid {
+
+    constructor(rows, columns) {
+        this.rows = rows;
+        this.columns = columns;
+        this.matrix = Array(configuration.rows).fill().map(() => Array(configuration.columns).fill(0));
+        this.cells = document.querySelectorAll("#grid>div");
+    }
+
+    isMovable(tetramino) {
+        return tetramino.matrix.every((row, rowIndex) => {
+            return row.every((cell, columnIndex) => {
+                if (!cell) return true;
+    
+                const newRow = tetramino.row + rowIndex;
+                const newColumn = tetramino.column + columnIndex;
+    
+                return (
+                    newRow < this.rows &&
+                    newColumn >= 0 &&
+                    newColumn < this.columns &&
+                    (newRow < 0 ? true : this.matrix[newRow][newColumn] === 0)
+                );
+            });
+        });
+    }
+
+    isPlaceable(tetramino) {
+        return tetramino.matrix.every((row, rowIndex) => {
+            return row.every((cell, columnIndex) => {
+                if (!cell) return true;
+                return (!(tetramino.row + rowIndex < 0));
+            });
+        });
+    }
+
+    placeTetramino(tetramino, gameOver) {
+        if (!this.isPlaceable(tetramino)) return gameOver();
+
+        tetramino.matrix.forEach((row, rowIndex) => {
+            row.forEach((cell, columnIndex) => {
+                if (cell) {
+                    this.matrix[tetramino.row + rowIndex][tetramino.column + columnIndex] = tetramino.name; 
+                }
+            });
+        });
+    
+        this.clearFullLines();
+    }
+
+    clearFullLines() {
+        this.matrix.forEach((row, rowIndex) => {
+            if (!row.includes(0)) {
+                this.matrix.splice(rowIndex, 1);
+                this.matrix.unshift(new Array(10).fill(0));
             }
         })
-    })
-};
-
-/* ---------- TETRAMINO LOGIC ---------- */
-
-const generateTetramino = () => {
-    const name = configuration.names[Math.floor(Math.random() * configuration.names.length)];
-    const matrix = configuration.matrices[name];
-    const row = -3 ;
-    const column = 3;
-
-    return { name, matrix, row, column };
-};
-
-const renderTetramino = () => {
-    tetramino.matrix.forEach((row, rowIndex) => {
-        row.forEach((cell, columnIndex) => {
-            if (cell && tetramino.row + rowIndex >= 0) {
-                const index = (tetramino.row + rowIndex) * configuration.columns + (tetramino.column + columnIndex);
-                cells[index].classList.add(tetramino.name);
-            }
-        });
-    });
-};
-
-/* ---------- MOVEMENT LOGIC ---------- */
-
-const moveTetramino = (direction) => {
-    const { row, column } = tetramino;
-
-    switch(direction) {
-        case "down": tetramino.row++; break;
-        case "right": tetramino.column++; break;
-        case "left": tetramino.column--; break;
-    }
-
-    if (!isMovable()) {
-        tetramino.row = (direction === "down" ? row : tetramino.row);
-        tetramino.column = (direction !== "down" ? column : tetramino.column);
-        
-        if (direction === "down") {
-            placeTetramino(tetramino);
-            tetramino = generateTetramino();
-        }
-    }
-
-    renderGrid();
-    renderTetramino();
-
-    if (direction === "down") {
-        stopLoop();
-        startLoop();
     }
 }
 
-const rotateTetramino = () => {
-    const originalMatrix = tetramino.matrix;
-    tetramino.matrix = tetramino.matrix[0].map((_, colIndex) =>
-        tetramino.matrix.map(row => row[colIndex]).reverse()
-    );
-
-    if (!isMovable()) tetramino.matrix = originalMatrix;
-
-    renderGrid();
-    renderTetramino();
-};
-
-/* ---------- COLLISION LOGIC ---------- */
-
-const isMovable = () => {
-    return tetramino.matrix.every((row, rowIndex) => {
-        return row.every((cell, columnIndex) => {
-            if (!cell) return true;
-
-            const newRow = tetramino.row + rowIndex;
-            const newColumn = tetramino.column + columnIndex;
-
-            return (
-                newRow < configuration.rows &&
-                newColumn >= 0 &&
-                newColumn < configuration.columns &&
-                (newRow < 0 ? true : grid[newRow][newColumn] === 0)
-            );
-        });
-    });
-};
-
-const isPlaceable = () => {
-    return tetramino.matrix.every((row, rowIndex) => {
-        return row.every((cell, columnIndex) => {
-            if (!cell) return true;
-            return (!(tetramino.row + rowIndex < 0));
-        });
-    });
-};
-
-/* ---------- PLACING LOGIC ---------- */
-
-const placeTetramino = () => {
-    if (!isPlaceable()) return gameOver();
-
-    tetramino.matrix.forEach((row, rowIndex) => {
-        row.forEach((cell, columnIndex) => {
-            if (cell) {
-                grid[tetramino.row + rowIndex][tetramino.column + columnIndex] = tetramino.name; 
-            }
-        });
-    });
-
-    clearFullLines();
-}
-
-const clearFullLines = () => {
-    grid.forEach((row, rowIndex) => {
-        if (!row.includes(0)) {
-            grid.splice(rowIndex, 1);
-            grid.unshift(new Array(10).fill(0));
-        }
-    })
-}
-
-/* ---------- + GAME OVER ---------- */
-
-const gameOver = () => {
-    alert("Game over");
-    location.reload();
-}
-
-/* ---------- + MAIN LOOP ---------- */
-
-let timeoutId, requestId;
-
-const startLoop = () => {
-    timeoutId = setTimeout(() => {
-        requestId = requestAnimationFrame(() => moveTetramino("down"));
-    }, 600);
-};
-
-const stopLoop = () => {
-    cancelAnimationFrame(requestId);
-    clearTimeout(timeoutId);
-};
-
-/* ---------- + EVENT LISTENERS ---------- */
-
-document.addEventListener('keydown', (event) => {
-    switch (event.key) {
-        case "ArrowUp": rotateTetramino(); break;
-        case "ArrowDown": moveTetramino("down"); break;
-        case "ArrowLeft": moveTetramino("left"); break;
-        case "ArrowRight": moveTetramino("right"); break;
-    }
-});
-
-/* ---------- + START GAME ---------- */
-
-let tetramino = generateTetramino();
-renderGrid();
-renderTetramino();
-startLoop();
+const tetris = new Tetris(configuration);
+tetris.startGame();
