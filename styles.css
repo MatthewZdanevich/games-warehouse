@@ -1,0 +1,117 @@
+/* ---------- VARIABLES ---------- */
+
+:root {
+    --background-color: #FCE9F1;
+    
+    --header-color: #F1D4E5;
+    --header-title-color: #080202;
+
+    --empty-game-border-color: #73BBC9;
+    --empty-game-title-color: #73BBC9;
+    --empty-game-dark-color: #F1D4E5;
+    --empty-game-light-color: #FCE9F1;
+    
+    --tetris-dark-color: #27005D;
+    --tetris-light-color: #9400FF;
+}
+
+/* ---------- PAGE ---------- */
+
+body {
+    margin: 0px;
+    background-color: var(--background-color);
+    font-family: "Onest", sans-serif;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* ---------- HEADER ---------- */
+
+.header {
+    color: var(--header-title-color);
+    background-color: var(--header-color);
+    
+    font-size: 18px;
+    font-weight: 600;
+
+    position: sticky;
+    top: 0px;
+    padding: 15px;
+    z-index: 1;
+}
+
+/* ---------- MAIN ---------- */
+
+.main {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 20px;
+
+    padding: 40px 80px 40px 80px;
+}
+
+/* ---------- GAME ---------- */
+
+.game {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    grid-template-rows: 120px;
+    gap: 20px;
+    
+    border-radius: 8px;
+
+    padding: 20px;
+}
+.poster {
+    border-radius: 8px;
+}
+.title {
+    font-weight: 700;
+}
+
+/* ---------- EMPTY GAMES ---------- */
+
+.empty {
+    background-color: var(--empty-game-dark-color);
+}
+.empty:hover {
+    transition: 300ms;
+    box-shadow: 0px 0px 0px 3px var(--empty-game-dark-color);
+}
+.empty > .poster {
+    background-color: var(--empty-game-light-color);
+}
+.empty > .title {
+    color: var(--empty-game-title-color);
+}
+
+/* ---------- COMPLETE GAMES ---------- */
+
+.tetris {
+    background-color: var(--tetris-light-color);
+}
+.tetris > .poster {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 4px;
+
+    background-color: var(--tetris-dark-color);
+
+    padding: 14px;
+}
+.tetris > .poster > .block {
+    background-color: var(--tetris-light-color);
+}
+.tetris > .title {
+    color: var(--tetris-dark-color);
+
+    font-weight: 700;
+}
+.tetris:hover {
+    transition: 300ms;
+    box-shadow: 0px 0px 0px 3px var(--tetris-dark-color);
+}
