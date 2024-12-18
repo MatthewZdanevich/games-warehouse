@@ -1,6 +1,6 @@
 /* ---------- TETRAMINO ---------- */
 
-export class Tetramino {
+class Tetramino {
 
     constructor(name, matrix) {
         this.name = name;
@@ -16,3 +16,5 @@ export class Tetramino {
     }
 
 }
+
+module.exports = Tetramino;

@@ -1,8 +1,8 @@
 /* ---------- GRID ---------- */
 
-import { configuration } from "./constants.js";
+const configuration = require('./constants.js');
 
-export class Grid {
+class Grid {
 
     constructor(rows, columns) {
         this.rows = rows;
@@ -61,3 +61,5 @@ export class Grid {
         })
     }
 }
+
+module.exports = Grid;

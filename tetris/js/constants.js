@@ -1,6 +1,6 @@
 /* ---------- CONSTANTS ---------- */
 
-export const configuration = {
+const configuration = {
     rows: 20,
     columns: 10,
     names: ["I", "J", "L", "O", "S", "T", "Z"],
@@ -42,3 +42,5 @@ export const configuration = {
         ]
     }
 }
+
+module.exports = configuration;

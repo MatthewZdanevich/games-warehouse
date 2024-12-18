@@ -1,9 +1,10 @@
 /* ---------- TETRIS ---------- */
 
-import { Tetramino } from './tetramino.js';
-import { Grid } from './grid.js';
+const Grid = require('./grid.js');
+const Tetramino = require('./tetramino.js');
+const configuration = require('./constants.js');
 
-export class Tetris {
+class Tetris {
 
     constructor(configuration) {
         this.rows = configuration.rows;
@@ -127,3 +128,5 @@ export class Tetris {
     }
 
 }
+
+module.exports = Tetris;

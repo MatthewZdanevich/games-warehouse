@@ -1,7 +1,7 @@
 /* ---------- MAIN SCRIPT ---------- */
 
-import { configuration } from "./constants.js";
-import { Tetris } from "./tetris.js";
+const Tetris = require('./tetris.js');
+const configuration = require('./constants.js');
 
 const tetris = new Tetris(configuration);
 tetris.startGame();
