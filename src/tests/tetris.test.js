@@ -8,10 +8,10 @@ jest.mock('pino', () => () => ({
     debug: jest.fn(),
 }));
 
-const configuration = require('../tetris/js/constants');
-const Grid = require('../tetris/js/grid');
-const Tetramino = require('../tetris/js/tetramino');
-const Tetris = require('../tetris/js/tetris');
+const configuration = require('../js/constants.js');
+const Grid = require('../js/grid.js');
+const Tetramino = require('../js/tetramino.js');
+const Tetris = require('../js/tetris.js');
 
 /* ---------- CONFIGURATION OBJECT ---------- */
 

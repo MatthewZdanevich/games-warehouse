@@ -1,6 +1,6 @@
 /* ---------- TETRIS ---------- */
 
-const logger = require('../../logger.js')
+const logger = require('./logger.js')
 const Grid = require('./grid.js');
 const Tetramino = require('./tetramino.js');
 const configuration = require('./constants.js');

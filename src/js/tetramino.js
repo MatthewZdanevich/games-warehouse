@@ -1,6 +1,6 @@
 /* ---------- TETRAMINO ---------- */
 
-const logger = require('../../logger.js');
+const logger = require('./logger.js');
 
 class Tetramino {
 

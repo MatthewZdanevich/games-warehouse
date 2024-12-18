@@ -1,6 +1,6 @@
 /* ---------- GRID ---------- */
 
-const logger = require('../../logger.js');
+const logger = require('./logger.js');
 const configuration = require('./constants.js');
 
 class Grid {
