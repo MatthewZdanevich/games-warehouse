@@ -1,8 +1,6 @@
 # games-warehouse v1.0.0
----
 “games-warehouse” is a website where you can play a variety of classic games. At the moment the site is under development, but you can already evaluate it and visit it.
 ## Features:
----
 **Below is a list of games that are available at this stage of development:**
 ### Tetris Avalanche
 - **About**:
@@ -16,7 +14,6 @@
 	- Arrange falling tetrominoes into complete lines to clear them and earn points.
 	- The game ends when the tetrominoes stack to the top of the grid.
 ## Development:
----
 **Below is a list of the technologies that were used in the development:**
 - Frontend: HTML, CSS, Javascript.
 - Testing: Jest.
