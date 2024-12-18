@@ -1,5 +1,6 @@
 /* ---------- TETRIS ---------- */
 
+const logger = require('../../logger.js')
 const Grid = require('./grid.js');
 const Tetramino = require('./tetramino.js');
 const configuration = require('./constants.js');
@@ -17,6 +18,8 @@ class Tetris {
 
         this.timeoutId = undefined;
         this.requestId = undefined;
+
+        logger.info(`The object of a Tetris game with a ${this.rows} x ${this.columns} configuration was created`);
     }
 
     // TETRAMINO LOGIC
@@ -31,16 +34,27 @@ class Tetris {
         const { row, column } = this.tetramino;
 
         switch(direction) {
-            case "down": this.tetramino.row++; break;
-            case "right": this.tetramino.column++; break;
-            case "left": this.tetramino.column--; break;
+            case "down":
+                this.tetramino.row++;
+                logger.info("Moving the tetramino down");
+                break;
+            case "right":
+                this.tetramino.column++;
+                logger.info("Moving the tetramino right");
+                break;
+            case "left":
+                this.tetramino.column--;
+                logger.info("Moving the tetramino left");
+                break;
         }
     
         if (!this.grid.isMovable(this.tetramino)) {
+            logger.info("Movement is blocked");
             this.tetramino.row = (direction === "down" ? row : this.tetramino.row);
             this.tetramino.column = (direction !== "down" ? column : this.tetramino.column);
             
             if (direction === "down") {
+                logger.info("Tetramino has reached the lower limit");
                 this.grid.placeTetramino(this.tetramino, this.stopGame);
                 this.generateTetramino();
             }
@@ -59,7 +73,11 @@ class Tetris {
         const originalMatrix = this.tetramino.matrix;
         this.tetramino.rotate();
     
-        if (!this.grid.isMovable(this.tetramino)) this.tetramino.matrix = originalMatrix;
+        if (!this.grid.isMovable(this.tetramino)) {
+            this.tetramino.matrix = originalMatrix;
+            logger.info("Rotation is not possible");
+            logger.info("Tetramino is back to his original position");
+        }
     
         this.renderGrid();
         this.renderTetramino();
@@ -106,6 +124,8 @@ class Tetris {
     // GAME LOGIC
 
     startGame() {
+        logger.info("The game is up and running");
+
         document.addEventListener('keydown', (event) => {
             switch (event.key) {
                 case "ArrowUp": this.rotateTetramino(); break;
@@ -119,10 +139,12 @@ class Tetris {
         this.generateTetramino();
         this.renderGrid();
         this.renderTetramino();
+
         this.startLoop();
     }
 
     stopGame() {
+        logger.info("The game is over");
         alert("Game over");
         location.reload();
     }

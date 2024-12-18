@@ -1,5 +1,13 @@
 /* ---------- TETRIS TESTS ---------- */
 
+jest.mock('pino', () => () => ({
+    fatal: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
+}));
+
 const configuration = require('../tetris/js/constants');
 const Grid = require('../tetris/js/grid');
 const Tetramino = require('../tetris/js/tetramino');
