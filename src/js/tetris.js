@@ -135,7 +135,50 @@ class Tetris {
             }
         });
 
+        const saveProgressButton = document.querySelector(".save-progress-button");
+        saveProgressButton.addEventListener('click', () => {
+            let gameState = {
+                score: this.grid.score,
+                grid: this.grid.matrix
+            };
+            localStorage.setItem("tetrisGameState", JSON.stringify(gameState));
+            logger.info("Game progress has been saved");
+        });
+
         this.grid = new Grid(this.rows, this.columns);
+        this.generateTetramino();
+        this.renderGrid();
+        this.renderTetramino();
+
+        this.startLoop();
+    }
+
+    loadGame(score, grid) {
+        logger.info("The game is up and running");
+
+        document.addEventListener('keydown', (event) => {
+            switch (event.key) {
+                case "ArrowUp": this.rotateTetramino(); break;
+                case "ArrowDown": this.moveTetramino("down"); break;
+                case "ArrowLeft": this.moveTetramino("left"); break;
+                case "ArrowRight": this.moveTetramino("right"); break;
+            }
+        });
+
+        const saveProgressButton = document.querySelector(".save-progress-button");
+        saveProgressButton.addEventListener('click', () => {
+            let gameState = {
+                score: this.grid.score,
+                grid: this.grid.matrix
+            };
+            localStorage.setItem("tetrisGameState", JSON.stringify(gameState));
+            logger.info("Game progress has been saved");
+        });
+
+        this.grid = new Grid(this.rows, this.columns);
+        this.grid.score = score;
+        this.grid.matrix = grid;
+        this.grid.scoreTitle.innerHTML = `${score}`;
         this.generateTetramino();
         this.renderGrid();
         this.renderTetramino();

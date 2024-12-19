@@ -653,10 +653,14 @@ const configuration = require('./constants.js');
 class Grid {
 
     constructor(rows, columns) {
+        this.score = 0;
+        this.scoreTitle = document.querySelector(".score");
+
         this.rows = rows;
         this.columns = columns;
         this.matrix = Array(configuration.rows).fill().map(() => Array(configuration.columns).fill(0));
         this.cells = document.querySelectorAll(".grid>div");
+
         logger.info(`The ${rows} by ${columns} grid was created`);
     }
 
@@ -708,10 +712,16 @@ class Grid {
     }
 
     clearFullLines() {
+        let combo = 1;
+
         this.matrix.forEach((row, rowIndex) => {
             if (!row.includes(0)) {
                 this.matrix.splice(rowIndex, 1);
                 this.matrix.unshift(new Array(10).fill(0));
+
+                this.score = this.score + combo * 10;
+                combo += 1;
+                this.scoreTitle.textContent = `${this.score}`;
 
                 logger.debug({ deletedLineIndex: rowIndex });
                 logger.debug({ gridMatrix: this.matrix });
@@ -744,10 +754,38 @@ const logger = require('./logger.js');
 const Tetris = require('./tetris.js');
 const configuration = require('./constants.js');
 
-logger.info("Starting Tetris");
+const startGameButton = document.querySelector(".start-game-button");
+const loadGameButton = document.querySelector(".load-progress-button");
 
-const tetris = new Tetris(configuration);
-tetris.startGame();
+function startGameHandler() {
+    logger.info("Starting Tetris");
+    
+    const tetris = new Tetris(configuration);
+    tetris.startGame();
+
+    startGameButton.classList.add("disabled");
+    loadGameButton.classList.add("disabled");
+    startGameButton.removeEventListener('click', startGameHandler);
+    loadGameButton.removeEventListener('click', loadGameHandler);
+}
+
+function loadGameHandler() {
+    logger.info("Loading Tetris");
+
+    const savedState = JSON.parse(localStorage.getItem("tetrisGameState"));
+    logger.debug(savedState);
+
+    const tetris = new Tetris(configuration);
+    tetris.loadGame(savedState.score, savedState.grid);
+
+    startGameButton.classList.add("disabled");
+    loadGameButton.classList.add("disabled");
+    startGameButton.removeEventListener('click', startGameHandler);
+    loadGameButton.removeEventListener('click', loadGameHandler);
+}
+
+startGameButton.addEventListener('click', startGameHandler);
+loadGameButton.addEventListener('click', loadGameHandler);
 },{"./constants.js":4,"./logger.js":6,"./tetris.js":9}],8:[function(require,module,exports){
 /* ---------- TETRAMINO ---------- */
 
@@ -915,7 +953,50 @@ class Tetris {
             }
         });
 
+        const saveProgressButton = document.querySelector(".save-progress-button");
+        saveProgressButton.addEventListener('click', () => {
+            let gameState = {
+                score: this.grid.score,
+                grid: this.grid.matrix
+            };
+            localStorage.setItem("tetrisGameState", JSON.stringify(gameState));
+            logger.info("Game progress has been saved");
+        });
+
         this.grid = new Grid(this.rows, this.columns);
+        this.generateTetramino();
+        this.renderGrid();
+        this.renderTetramino();
+
+        this.startLoop();
+    }
+
+    loadGame(score, grid) {
+        logger.info("The game is up and running");
+
+        document.addEventListener('keydown', (event) => {
+            switch (event.key) {
+                case "ArrowUp": this.rotateTetramino(); break;
+                case "ArrowDown": this.moveTetramino("down"); break;
+                case "ArrowLeft": this.moveTetramino("left"); break;
+                case "ArrowRight": this.moveTetramino("right"); break;
+            }
+        });
+
+        const saveProgressButton = document.querySelector(".save-progress-button");
+        saveProgressButton.addEventListener('click', () => {
+            let gameState = {
+                score: this.grid.score,
+                grid: this.grid.matrix
+            };
+            localStorage.setItem("tetrisGameState", JSON.stringify(gameState));
+            logger.info("Game progress has been saved");
+        });
+
+        this.grid = new Grid(this.rows, this.columns);
+        this.grid.score = score;
+        this.grid.matrix = grid;
+        this.grid.scoreTitle.innerHTML = `${score}`;
         this.generateTetramino();
         this.renderGrid();
         this.renderTetramino();

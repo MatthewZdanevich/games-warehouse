@@ -8,6 +8,16 @@ jest.mock('pino', () => () => ({
     debug: jest.fn(),
 }));
 
+jest.spyOn(document, "querySelector").mockImplementation((selector) => {
+    if (selector === ".score-title") {
+        return { innerHTML: "" };
+    }
+    if (selector === ".save-progress-button") {
+        return { addEventListener: jest.fn() };
+    }
+    return null;
+});
+
 const configuration = require('../js/constants.js');
 const Grid = require('../js/grid.js');
 const Tetramino = require('../js/tetramino.js');
@@ -73,7 +83,9 @@ describe("Testing grid class", () => {
 
     test("Grid should correctly handle the filled rows", () => {
         const grid = new Grid(configuration.rows, configuration.columns);
-        
+        grid.score = 0;
+        grid.scoreTitle = { innerHTML: "" };
+
         grid.matrix[19] = grid.matrix[19].fill(1);
         expect(grid.matrix[19].every(cell => cell === 1)).toBeTruthy();
 

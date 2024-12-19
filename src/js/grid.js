@@ -6,10 +6,14 @@ const configuration = require('./constants.js');
 class Grid {
 
     constructor(rows, columns) {
+        this.score = 0;
+        this.scoreTitle = document.querySelector(".score");
+
         this.rows = rows;
         this.columns = columns;
         this.matrix = Array(configuration.rows).fill().map(() => Array(configuration.columns).fill(0));
         this.cells = document.querySelectorAll(".grid>div");
+
         logger.info(`The ${rows} by ${columns} grid was created`);
     }
 
@@ -61,10 +65,16 @@ class Grid {
     }
 
     clearFullLines() {
+        let combo = 1;
+
         this.matrix.forEach((row, rowIndex) => {
             if (!row.includes(0)) {
                 this.matrix.splice(rowIndex, 1);
                 this.matrix.unshift(new Array(10).fill(0));
+
+                this.score = this.score + combo * 10;
+                combo += 1;
+                this.scoreTitle.textContent = `${this.score}`;
 
                 logger.debug({ deletedLineIndex: rowIndex });
                 logger.debug({ gridMatrix: this.matrix });

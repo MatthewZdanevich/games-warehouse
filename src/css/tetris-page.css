@@ -5,6 +5,8 @@
     --fill-color: #31363F;
     --font-color: #EEEEEE;
     --description-color: #76ABAE;
+    --disabled-fill-color: #331D2C;
+    --disabled-font-color: #3F2E3E;
 
     --cyan-color: #AFD3E2;
     --blue-color: #4E31AA;
@@ -13,8 +15,6 @@
     --green-color: #8EB486;
     --magenta-color: #BF2EF0;
     --red-color: #FD5E53;
-
-    transition: all 2s ease;
 }
 
 /* ---------- PAGE ---------- */
@@ -29,6 +29,8 @@ body {
     margin: 3vh;
     background-color: var(--background-color);
     user-select: none;
+    
+    transition: 0.3s ease;
 }
 
 /* ---------- LAYOUT ---------- */
@@ -89,8 +91,10 @@ body {
     height: 50px;
 
     margin: 0.4vh;
+
+    transition: transform 0.3s ease, background-color 0.3s ease;
 }
-.info-title {
+.title {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -98,7 +102,7 @@ body {
     color: var(--font-color);
     font-size: 20px;
 }
-.toggle-theme-button {
+.button {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -107,12 +111,23 @@ body {
     font-size: 16px;
 
     cursor: pointer;
-    transition: transform 0.3s ease, background-color 0.3s ease;
 }
-.toggle-theme-button:hover {
+.button:hover {
     transform: scale(1.05);
     background-color: var(--font-color);
     color: var(--background-color);
+}
+.start-game-button.disabled {
+    background-color: var(--disabled-fill-color);
+    color: var(--disabled-font-color);
+    cursor: not-allowed;
+    transform: none;
+}
+.load-progress-button.disabled {
+    background-color: var(--disabled-fill-color);
+    color: var(--disabled-font-color);
+    cursor: not-allowed;
+    transform: none;
 }
 
 /* ---------- TETRAMINO ---------- */
