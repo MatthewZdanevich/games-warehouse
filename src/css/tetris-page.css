@@ -3,16 +3,18 @@
 :root {
     --background-color: #222831;
     --fill-color: #31363F;
-    --bright-color: #EEEEEE;
-    --dim-color: #76ABAE;
+    --font-color: #EEEEEE;
+    --description-color: #76ABAE;
 
-    --cyan-color: #B1F0F7;
-    --blue-color: #4F75FF;
+    --cyan-color: #AFD3E2;
+    --blue-color: #4E31AA;
     --orange-color: #FAB12F;
     --yellow-color: #FFF574;
     --green-color: #8EB486;
-    --magenta-color: #1230AE;
-    --red-color: #AF1740;
+    --magenta-color: #BF2EF0;
+    --red-color: #FD5E53;
+
+    transition: all 2s ease;
 }
 
 /* ---------- PAGE ---------- */
@@ -74,12 +76,16 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: start;
+
+    padding: 1vh;
 }
 .info-container > div {
     background-color: var(--fill-color);
     border-radius: 0.5vh;
+    font-family: "Fredoka", serif;
+    font-weight: 500;
 
-    width: 200px;
+    width: 250px;
     height: 50px;
 
     margin: 0.4vh;
@@ -89,10 +95,24 @@ body {
     justify-content: center;
     align-items: center;
 
-    color: var(--bright-color);
-    font-family: "Fredoka", serif;
-    font-weight: 500;
+    color: var(--font-color);
     font-size: 20px;
+}
+.toggle-theme-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: var(--description-color);
+    font-size: 16px;
+
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+.toggle-theme-button:hover {
+    transform: scale(1.05);
+    background-color: var(--font-color);
+    color: var(--background-color);
 }
 
 /* ---------- TETRAMINO ---------- */
