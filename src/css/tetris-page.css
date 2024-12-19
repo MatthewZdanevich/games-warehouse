@@ -1,0 +1,127 @@
+/* ---------- VARIABLES ---------- */
+
+:root {
+    --background-color: #222831;
+    --fill-color: #31363F;
+    --bright-color: #EEEEEE;
+    --dim-color: #76ABAE;
+
+    --cyan-color: #B1F0F7;
+    --blue-color: #4F75FF;
+    --orange-color: #FAB12F;
+    --yellow-color: #FFF574;
+    --green-color: #8EB486;
+    --magenta-color: #1230AE;
+    --red-color: #AF1740;
+}
+
+/* ---------- PAGE ---------- */
+
+* {
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+body {
+    margin: 3vh;
+    background-color: var(--background-color);
+    user-select: none;
+}
+
+/* ---------- LAYOUT ---------- */
+
+.main-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr;
+    gap: 4vw;
+
+    width: 100vw;
+    height: 94vh;
+}
+.main-element {
+    display: flex;
+    align-items: center;
+
+    height: 94vh;
+}
+
+/* ---------- GRID-CONTAINER ---------- */
+
+.grid-container {
+    justify-content: end;
+}
+.grid {
+    display: grid;
+    grid-template-rows: repeat(20, 1fr);
+    grid-template-columns: repeat(10, 1fr);
+    gap: 0.4vh;
+
+    padding: 1vh;
+}
+.grid > div {
+    background-color: var(--fill-color);
+    border-radius: 0.5vh;
+
+    width: 4.23vh;
+    height: 4.23vh;
+}
+
+/* ---------- INFO-CONTAINER ---------- */
+
+.info-container {
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+}
+.info-container > div {
+    background-color: var(--fill-color);
+    border-radius: 0.5vh;
+
+    width: 200px;
+    height: 50px;
+
+    margin: 0.4vh;
+}
+.info-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: var(--bright-color);
+    font-family: "Fredoka", serif;
+    font-weight: 500;
+    font-size: 20px;
+}
+
+/* ---------- TETRAMINO ---------- */
+
+.grid > div.I {
+    background-color: var(--cyan-color);
+    box-shadow: 0px 0px 5px var(--cyan-color);
+}
+.grid > div.J {
+    background-color: var(--blue-color);
+    box-shadow: 0px 0px 5px var(--blue-color);
+}
+.grid > div.L {
+    background-color: var(--orange-color);
+    box-shadow: 0px 0px 5px var(--orange-color);
+}
+.grid > div.O {
+    background-color: var(--yellow-color);
+    box-shadow: 0px 0px 5px var(--yellow-color);
+}
+.grid > div.S {
+    background-color: var(--green-color);
+    box-shadow: 0px 0px 5px var(--green-color);
+}
+.grid > div.T {
+    background-color: var(--magenta-color);
+    box-shadow: 0px 0px 5px var(--magenta-color);
+}
+.grid > div.Z {
+    background-color: var(--red-color);
+    box-shadow: 0px 0px 5px var(--red-color);
+}

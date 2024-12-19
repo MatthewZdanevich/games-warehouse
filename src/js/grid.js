@@ -9,7 +9,7 @@ class Grid {
         this.rows = rows;
         this.columns = columns;
         this.matrix = Array(configuration.rows).fill().map(() => Array(configuration.columns).fill(0));
-        this.cells = document.querySelectorAll("#grid>div");
+        this.cells = document.querySelectorAll(".grid>div");
         logger.info(`The ${rows} by ${columns} grid was created`);
     }
 
